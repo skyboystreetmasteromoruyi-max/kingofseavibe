@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKY KING OF SEA WATER - 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0d1a26; margin: 0; padding: 0; overflow-x: hidden; color: white; }
+        .bg-ocean-deep { background: linear-gradient(180deg, #0d1a26 0%, #1e3a8a 75%, #0d1a26 100%); }
+        .king-entrance { animation: arrival 4s ease-out forwards; background: #000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        @keyframes arrival { 0%, 80% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+        .car-motion { animation: drive 4s ease-in-out forwards; }
+        @keyframes drive { 0% { transform: translateX(-120%); } 20% { transform: translateX(0); } 80% { transform: scale(1.1); } 100% { transform: translateX(120%); } }
+        .motorcycle-motion { animation: ride 4s ease-in-out forwards; }
+        @keyframes ride { 0% { transform: translateX(120%); } 20% { transform: translateX(0); } 80% { transform: scale(1.1); } 100% { transform: translateX(-120%); } }
+        .chat-box { height: 300px; overflow-y: auto; scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+    const kingPayPal = "skyboystreetmasteromoruyi@gmail.com";
+    
+    let state = {
+        currentPage: 'loading',
+        isVip: false,
+        is18Plus: false,
+        chatMessages: [],
+        musicPlaying: false
+    };
+
+    const render = (html) => { document.getElementById('app').innerHTML = html; };
+
+    // --- NAVIGATION & PAGES ---
+    const navigate = (page) => { state.currentPage = page; updateUI(); };
+
+    const handleAgeConfirm = () => {
+        state.is18Plus = true;
+        alert("Age Confirmed. The King allows you to proceed to payment.");
+        updateUI();
+    };
+
+    const handlePayment = (amount, note) => {
+        const url = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(kingPayPal)}&amount=${amount}&currency_code=USD&item_name=${encodeURIComponent(note)}`;
+        window.open(url, '_blank');
+        if(amount === "12.00") {
+            state.isVip = true; 
+            navigate('vip');
+        }
+    };
+
+    const handleDancerSubmit = (e) => {
+        e.preventDefault();
+        alert("Dancer Registered! Skyboy Street Master will call your video for confirmation.");
+    };
+
+    // --- UI COMPONENTS ---
+    const Header = () => `
+        <div class="flex justify-center p-4 bg-gray-900/90 sticky top-0 z-50 border-b border-teal-900">
+            <div class="space-x-2 flex">
+                <button onclick="navigate('home')" class="px-4 py-2 rounded-full bg-teal-600 text-xs font-bold">HOME</button>
+                <button onclick="navigate('vip_gate')" class="px-4 py-2 rounded-full bg-yellow-600 text-xs font-bold">V.I.P.</button>
+            </div>
+        </div>`;
+
+    const Entrance = () => `
+        <div class="king-entrance">
+            <div class="flex flex-col items-center">
+                <h1 class="text-4xl font-black text-teal-400 mb-8">SKYBOY STREET MASTER</h1>
+                <div class="car-motion mb-4 bg-gray-800 p-4 border-2 border-teal-500 rounded">GANGSTER SEA CAR 🚗</div>
+                <div class="motorcycle-motion bg-gray-800 p-4 border-2 border-yellow-500 rounded">BATTLE MOTORCYCLE 🏍️</div>
+            </div>
+        </div>`;
+
+    const HomePage = () => `
+        ${Header()}
+        <div class="p-6 bg-ocean-deep min-h-screen">
+            <h1 class="text-3xl font-black text-center text-teal-400 mb-2">KING OF SEA WATER</h1>
+            <p class="text-center text-gray-400 mb-8">2026 OFFICIAL COMMAND CENTER</p>
+
+            <div class="max-w-xl mx-auto space-y-6">
+                <div class="p-6 bg-gray-900 border-2 border-green-500 rounded-xl text-center">
+                    <h3 class="text-xl font-bold text-green-400">SUPPORT THE MASTER</h3>
+                    <p class="text-sm mb-4">Send support directly to the King's bank.</p>
+                    <button onclick="handlePayment('10.00', 'Support for the King')" class="w-full py-3 bg-green-600 rounded-lg font-bold">SEND $10 SUPPORT</button>
+                </div>
+
+                <div class="p-6 bg-gray-900 border-2 border-pink-500 rounded-xl">
+                    <h3 class="text-xl font-bold text-pink-500 mb-4">DANCER REGISTRATION</h3>
+                    <form onsubmit="handleDancerSubmit(event)">
+                        <input type="text" placeholder="TikTok Handle" class="w-full p-2 mb-2 bg-gray-800 rounded">
+                        <button class="w-full py-2 bg-pink-600 rounded font-bold">SUBMIT FOR VIDEO CALL</button>
+                    </form>
+                </div>
+
+                <div class="p-6 bg-yellow-900/30 border-2 border-yellow-500 rounded-xl text-center">
+                    <h3 class="text-xl font-bold text-yellow-500">V.I.P. ACCESS</h3>
+                    <p class="text-2xl font-black my-2">$12.00 / Month</p>
+                    <button onclick="navigate('vip_gate')" class="w-full py-3 bg-yellow-500 text-black font-black rounded-lg">UNLOCK WAR ROOM</button>
+                </div>
+            </div>
+        </div>`;
+
+    const VipGate = () => `
+        ${Header()}
+        <div class="min-h-screen flex items-center justify-center bg-black p-6">
+            <div class="max-w-md w-full p-8 bg-gray-900 border-4 border-red-600 rounded-2xl">
+                <h1 class="text-3xl font-black text-red-600 text-center mb-6">RESTRICTED AREA</h1>
+                <button onclick="handleAgeConfirm()" class="w-full py-4 mb-4 bg-red-700 rounded font-bold">I AM 18+ (CONFIRM)</button>
+                <button onclick="handlePayment('12.00', 'VIP WAR ROOM ACCESS')" class="w-full py-4 bg-yellow-500 text-black font-black rounded ${!state.is18Plus ? 'opacity-50 cursor-not-allowed' : ''}">PAY $12 TO ENTER</button>
+            </div>
+        </div>`;
+
+    const VipPage = () => `
+        ${Header()}
+        <div class="p-6 bg-ocean-deep min-h-screen">
+            <h1 class="text-3xl font-black text-yellow-500 text-center">SKYLER & SKYLAW LOUNGE</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                <div class="p-4 bg-black border border-red-600 rounded">WAR ROOM CHAT (LIVE)</div>
+                <div class="p-4 bg-black border border-teal-600 rounded">
+                    <h3 class="font-bold text-teal-400">12 SEA GAMES</h3>
+                    <ul class="text-xs mt-2"><li>1. Tidal Duel</li><li>2. Siren Grid</li><li>...and more</li></ul>
+                </div>
+            </div>
+        </div>`;
+
+    const updateUI = () => {
+        if (state.currentPage === 'loading') render(Entrance());
+        else if (state.currentPage === 'home') render(HomePage());
+        else if (state.currentPage === 'vip_gate') render(VipGate());
+        else if (state.currentPage === 'vip') render(VipPage());
+    };
+
+    window.onload = () => {
+        setTimeout(() => { state.currentPage = 'home'; updateUI(); }, 4000);
+        updateUI();
+    };
+</script>
+</body>
+</html>
